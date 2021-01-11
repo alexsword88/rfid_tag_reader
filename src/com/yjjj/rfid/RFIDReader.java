@@ -79,8 +79,6 @@ import org.llrp.ltk.types.UnsignedShortArray_HEX;
 public class RFIDReader implements LLRPEndpoint {
     public interface ReaderEvent {
         void onTagDataUpdate(TagData tagData);
-
-        void onTagDatasUpdate(List<TagData> tagDatas);
     }
 
     private int operationTimeout = Const.TIMEOUT_DEFAULT;
@@ -142,7 +140,6 @@ public class RFIDReader implements LLRPEndpoint {
             // RoSpec and Access Report.
             RO_ACCESS_REPORT report = (RO_ACCESS_REPORT) message;
             List<TagReportData> tags = report.getTagReportDataList();
-            List<TagData> currentTags = new ArrayList<TagData>();
             if (tags.size() > 0) {
                 for (TagReportData tag : tags) {
                     String epc = ((EPC_96) tag.getEPCParameter()).getEPC().toString();
@@ -163,15 +160,7 @@ public class RFIDReader implements LLRPEndpoint {
                     } else {
                         this.tagDatas.add(currentTag);
                     }
-
-                    // int duplicateIndexCurrent = currentTags.indexOf(currentTag);
-                    // if (duplicateIndexCurrent != -1) {
-                    // currentTags.set(duplicateIndexCurrent, currentTag);
-                    // } else {
-                    // currentTags.add(currentTag);
-                    // }
                 }
-                // this.readerEvent.onTagDatasUpdate(currentTags);
             }
         } else if (message.getTypeNum() == READER_EVENT_NOTIFICATION.TYPENUM) {
             // Reader Event Notification
